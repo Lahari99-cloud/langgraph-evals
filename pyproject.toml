@@ -40,6 +40,12 @@ dev = [
 [project.entry-points."pytest11"]
 langgraph_evals = "langgraph_evals.plugin:pytest_plugin"
 
+[project.urls]
+Homepage = "https://github.com/Lahari99-cloud/langgraph-evals"
+Repository = "https://github.com/Lahari99-cloud/langgraph-evals"
+Issues = "https://github.com/Lahari99-cloud/langgraph-evals/issues"
+Changelog = "https://github.com/Lahari99-cloud/langgraph-evals/blob/main/CHANGELOG.md"
+
 [tool.hatch.build.targets.sdist]
 include = [
     "/src",
