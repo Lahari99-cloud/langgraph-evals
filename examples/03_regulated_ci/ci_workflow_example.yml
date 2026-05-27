@@ -1,0 +1,114 @@
+# GitHub Actions Workflow Example for Regulated/Air-Gapped Environments
+# This workflow demonstrates how to run langgraph-evals in completely offline/zero-trust environments
+# with no external API calls or API key requirements.
+
+name: Regulated Environment CI
+
+# This workflow can run on self-hosted runners in air-gapped networks
+# or in environments with strict outbound firewall rules
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-evaluate:
+    runs-on: self-hosted  # or specify your air-gapped runner label
+    # For GitHub-hosted runners, you would use: runs-on: ubuntu-latest
+    # but self-hosted is recommended for truly regulated environments
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        # Install only from local/approved sources - no external internet needed
+        # In a fully air-gapped environment, you would use a local package index
+        pip install --no-index --find-links ./local-wheels/ .
+        # Or in CI with internet but no external API calls:
+        pip install -e .[dev]
+
+    - name: Run tests (offline mode)
+      # This runs all tests without requiring any external API keys or services
+      run: |
+        pytest tests/ -v --tb=short
+        # Example: Run specific regulated environment tests
+        pytest examples/03_regulated_ci/ -v
+
+    - name: Generate evaluation report
+      # Generate JSON report for compliance/audit purposes
+      run: |
+        mkdir -p reports
+        # Example evaluation that produces JSON report
+        python -c "
+        from langgraph_evals.reporters.json import JsonReporter
+        import json
+        reporter = JsonReporter()
+        results = {
+            'graph': 'regulated_agent_v1',
+            'timestamp': '2026-05-27T10:00:00Z',
+            'assertions': {
+                'assert_node_called': True,
+                'assert_node_output': True,
+                'assert_no_node_called': True,
+                'assert_tool_called': True,
+                'assert_tool_not_called': True
+            },
+            'trajectory': {
+                'efficiency_score': 0.92,
+                'completion_score': 1.0,
+                'loops_detected': 0,
+                'dead_end_detected': False
+            },
+            'failures': {},
+            'summary': {
+                'total': 5,
+                'passed': 5,
+                'failed': 0,
+                'success_rate': 1.0
+            }
+        }
+        reporter.report(results, 'reports/evaluation_report.json')
+        "
+
+    - name: Upload evaluation report
+      uses: actions/upload-artifact@v4
+      with:
+        name: langgraph-eval-report
+        path: reports/
+        retention-days: 30  # Adjust based on your data retention policies
+
+    - name: Check for failures (optional)
+      # Example compliance check - fail if any evaluations failed
+      run: |
+        if [ -f "reports/evaluation_report.json" ]; then
+          FAILED_COUNT=$(python -c "import json; d=json.load(open('reports/evaluation_report.json')); print(d['summary']['failed'])")
+          if [ "$FAILED_COUNT" -gt "0" ]; then
+            echo "Evaluation found $FAILED_COUNT failures"
+            exit 1
+          else
+            echo "All evaluations passed"
+          fi
+        fi
+
+# Notes for Regulated Environments:
+#
+# 1. ZERO API KEYS REQUIRED: This workflow makes no external API calls
+# 2. AIR-GAPPED COMPATIBLE: Can run on self-hosted runners with no internet
+# 3. NO EXTERNAL DEPENDENCIES: All dependencies can be pre-approved and cached
+# 4. COMPLIANCE READY: Generates JSON reports for audit trails
+# 5. FULLY OFFLINE: langgraph-evals is designed to work without external services
+#
+# To use in a fully air-gapped environment:
+# 1. Set up a self-hosted runner in your secure network
+# 2. Create a local Python package index with approved versions
+# 3. Use pip install --no-index --find-links <local-index> instead of direct pip install
+# 4. All langgraph-evals functionality works without any external calls
