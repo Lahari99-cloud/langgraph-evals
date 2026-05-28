@@ -26,6 +26,7 @@ classifiers = [
 dependencies = [
     "langgraph>=0.2.0",
     "langchain-core>=0.2.0",
+    "rich>=13.0.0",
 ]
 
 [project.optional-dependencies]
