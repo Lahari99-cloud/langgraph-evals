@@ -40,6 +40,9 @@ dev = [
 [project.entry-points."pytest11"]
 langgraph_evals = "langgraph_evals.plugin:pytest_plugin"
 
+[project.scripts]
+lge-trace = "langgraph_evals.tui.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/Lahari99-cloud/langgraph-evals"
 Repository = "https://github.com/Lahari99-cloud/langgraph-evals"
