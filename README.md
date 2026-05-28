@@ -6,6 +6,7 @@ No LangSmith. No cloud. No cost.
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Zero Egress](https://img.shields.io/badge/network-zero%20egress-important)
+![Demo](docs/demo.gif)
 
 ## Why not LangSmith?
 | Feature | LangSmith | langgraph-evals |
