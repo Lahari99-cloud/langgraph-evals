@@ -2,7 +2,7 @@
 Local-first evaluation harness for LangGraph agents.
 No LangSmith. No cloud. No cost.
 
-![Tests](https://img.shields.io/badge/tests-42%20passed-brightgreen)
+![Tests](https://img.shields.io/badge/tests-45%20passed-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Zero Egress](https://img.shields.io/badge/network-zero%20egress-important)
@@ -17,6 +17,30 @@ No LangSmith. No cloud. No cost.
 | Works in air-gapped CI | ❌ | ✅ |
 | Built-in failure taxonomy | ❌ | ✅ |
 | Memory persistence testing | ❌ | ✅ |
+
+## Why does this exist?
+
+LangSmith is LangChain's commercial monetization engine.
+Building a robust free offline eval harness into the open-source
+library would undercut enterprise SaaS subscriptions — so they didn't.
+
+Meanwhile three things happened simultaneously:
+
+1. **Enterprises adopted LangGraph** — JPMorgan, Amex, insurance,
+   defense contractors. Their security policies block cloud telemetry
+   completely. They had no way to eval their agents in CI.
+
+2. **The industry realized agents fail structurally, not just semantically**
+   — infinite loops, wrong conditional branches, tool hallucinations,
+   memory bleed. These are code bugs, not text quality issues.
+   pytest-style assertions catch them. LLM-as-a-judge doesn't.
+
+3. **LangGraph's graph architecture made local tracing hard** —
+   cyclical states, conditional edges, long-term memory. Nobody had
+   reverse-engineered a clean interception layer until now.
+
+`langgraph-evals` fills the gap: deterministic, structural,
+fully offline evaluation for LangGraph agents.
 
 ## Install
 pip install langgraph-evals
