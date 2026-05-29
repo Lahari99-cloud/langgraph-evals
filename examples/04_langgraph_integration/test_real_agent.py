@@ -2,6 +2,8 @@
 Test demonstrating real LangGraph integration with langgraph-evals assertions.
 This shows how to use GraphRunCapture to work with actual StateGraph executions.
 """
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from langgraph_evals.langgraph.runner import GraphRunCapture
 from langgraph_evals.core.assertions import (
     assert_node_called,

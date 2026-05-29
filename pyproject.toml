@@ -70,7 +70,6 @@ include = [
     "/README.md",
     "/LICENSE",
 ]
-
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]

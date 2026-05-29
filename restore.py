@@ -1,3 +1,6 @@
+"""Run this from C:\\Users\\lahar\\langgraph-evals to fix assertions.py"""
+
+content = '''\
 """Assertion utilities for evaluating LangGraph trajectories.
 
 Supported trace formats:
@@ -31,7 +34,7 @@ def assert_node_called(graph_run, node_name):
     called = _get_node_names(graph_run)
     if node_name not in called:
         raise AssertionError(
-            f"Expected node '{node_name}' to be called, but it was not. "
+            f"Expected node \'{node_name}\' to be called, but it was not. "
             f"Called nodes: {called}"
         )
 
@@ -57,18 +60,18 @@ def assert_node_output(graph_run, node_name, key, expected_value):
     if node_found is None:
         called = _get_node_names(graph_run)
         raise AssertionError(
-            f"Expected node '{node_name}' to be called, but it was not. "
+            f"Expected node \'{node_name}\' to be called, but it was not. "
             f"Called nodes: {called}"
         )
 
     output = node_found.get('output') if isinstance(node_found, dict) else getattr(node_found, 'output', None)
     if output is None:
-        raise AssertionError(f"Node '{node_name}' has no output attribute.")
+        raise AssertionError(f"Node \'{node_name}\' has no output attribute.")
 
     actual_value = output.get(key) if isinstance(output, dict) else getattr(output, key, None)
     if actual_value != expected_value:
         raise AssertionError(
-            f"Node '{node_name}' output mismatch for key '{key}'. "
+            f"Node \'{node_name}\' output mismatch for key \'{key}\'. "
             f"Expected: {expected_value!r}, Actual: {actual_value!r}"
         )
 
@@ -77,8 +80,8 @@ def assert_node_order(graph_run, expected_order):
     called = _get_node_names(graph_run)
     if called != expected_order:
         raise AssertionError(
-            f"Node call order mismatch.\n"
-            f"Expected: {expected_order}\n"
+            f"Node call order mismatch.\\n"
+            f"Expected: {expected_order}\\n"
             f"Actual:   {called}"
         )
 
@@ -87,7 +90,7 @@ def assert_no_node_called(graph_run, node_name):
     called = _get_node_names(graph_run)
     if node_name in called:
         raise AssertionError(
-            f"Expected node '{node_name}' to NOT be called, but it was called. "
+            f"Expected node \'{node_name}\' to NOT be called, but it was called. "
             f"Called nodes: {called}"
         )
 
@@ -102,7 +105,7 @@ def assert_tool_called(graph_run, tool_name):
               for c in tool_calls]
     if tool_name not in called:
         raise AssertionError(
-            f"Expected tool '{tool_name}' to be called, but it was not. "
+            f"Expected tool \'{tool_name}\' to be called, but it was not. "
             f"Called tools: {called}"
         )
 
@@ -117,6 +120,11 @@ def assert_tool_not_called(graph_run, tool_name):
               for c in tool_calls]
     if tool_name in called:
         raise AssertionError(
-            f"Expected tool '{tool_name}' to NOT be called, but it was called. "
+            f"Expected tool \'{tool_name}\' to NOT be called, but it was called. "
             f"Called tools: {called}"
         )
+'''
+
+with open('src/langgraph_evals/core/assertions.py', 'w', encoding='utf-8') as f:
+    f.write(content)
+print('assertions.py restored successfully')
